@@ -16,7 +16,8 @@ public class Bogglemain extends Activity {
 	public char[][] board; //Representation of the boggle board
 	public String activeIdentity; //The current identity of the board
 	public int score; //The total possible score of the board
-	public Set<String> posWords;
+	public Set<String> posWords; //The set containing all possible words
+	public Set<String> foundWords; //The set of all real words
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class Bogglemain extends Activity {
 		setContentView(R.layout.activity_boggle_main);
 		board = new char[4][4];
 		posWords = new HashSet<String>();
+		foundWords = new HashSet<String>();
 	}
 
 	@Override
@@ -33,6 +35,8 @@ public class Bogglemain extends Activity {
 		return true;
 	}
 	
+	/* The main logic for the boggle word search tool
+	 */
 	public void findWordsMain(View view){
 		parseBoard();
 		boolean copyExists = lookupBoard();
@@ -41,18 +45,29 @@ public class Bogglemain extends Activity {
 			//If a copy of the board exists in the SQL server, retrieve its contents
 		} else {
 			//Manually look for all of the words
-		}
-		
-		for(int y=0;y<4;y++){
-			for(int x=0;x<4;x++){
-				//getWordsByIndex(y,x);
-				//debug("-----------------------------");
+			for(int y=0;y<4;y++){
+				for(int x=0;x<4;x++){
+					getWordsByIndex(y,x);
+					String s1 = "Root: ("+y+","+x+") Letter: "+board[y][x];
+					debug(s1);
+					debug("-----------------------------");
+				}
 			}
 		}
 		
-		getWordsByIndex(0,0);
+		debug("Printing words...");
+		debug("-----------------");
 		
-		System.out.println(posWords);
+		/*for(String s : posWords){
+			debug(s);
+		}*/
+		
+		String s1 = "Length: "+posWords.size();
+		debug(s1);
+	}
+	
+	public void lookupWords(String word){
+		
 	}
 	
 	/* Takes an index of a starting letter and retrieves every possible word starting with
@@ -71,8 +86,8 @@ public class Bogglemain extends Activity {
 		}
 		
 		char rootLetter = board[y][x];
-		String t1 = "Root: "+y+","+x+" : "+rootLetter;
-		debug(t1);
+		//String t1 = "Root: "+y+","+x+" : "+rootLetter;
+		//debug(t1);
 		
 		used[y][x]=true;
 		
@@ -93,7 +108,6 @@ public class Bogglemain extends Activity {
 						//String t3 = "Letter: ("+i+","+j+") "+board[j][i];
 						//debug(t3);
 						recurseGetLetters(j,i,used,word);
-						debug("-------------------------------------");
 						for(int a=0;a<4;a++){
 							for(int b=0;b<4;b++){
 								used[a][b] = false;
