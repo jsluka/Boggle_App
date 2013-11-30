@@ -1,12 +1,14 @@
 package com.slukaindustries.boggle_app;
 
-import android.os.Bundle;
+import java.util.HashSet;
+import java.util.Set;
+
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import java.util.*;
 
 public class Bogglemain extends Activity {
 
