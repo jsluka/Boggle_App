@@ -28,97 +28,114 @@
             android:layout_column="0"
             android:layout_gravity="left|top"
             android:layout_row="0"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "a" />
 
         <EditText
             android:id="@+id/editText2"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "b" />
 
         <EditText
             android:id="@+id/editText3"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "c" />
 
         <EditText
             android:id="@+id/editText4"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "d" />
 
         <EditText
             android:id="@+id/editText5"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "e" />
 
         <EditText
             android:id="@+id/editText6"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "f" />
 
         <EditText
             android:id="@+id/editText7"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "g" />
 
         <EditText
             android:id="@+id/editText8"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "h" />
 
         <EditText
             android:id="@+id/editText9"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "i" />
 
         <EditText
             android:id="@+id/editText11"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text" 
+            android:text = "j" />
 
         <EditText
             android:id="@+id/editText12"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "k" />
 
         <EditText
             android:id="@+id/editText13"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "l" />
 
         <EditText
             android:id="@+id/editText14"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "m" />
 
         <EditText
             android:id="@+id/editText15"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "n" />
+        
 
         <EditText
             android:id="@+id/editText16"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "o" />
 
         <EditText 
             android:id="@+id/editText17"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
-            android:inputType = "text" />
+            android:inputType = "text"
+            android:text = "p" />
 
     </GridLayout>
 

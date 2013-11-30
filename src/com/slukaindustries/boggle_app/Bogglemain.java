@@ -2,9 +2,11 @@ package com.slukaindustries.boggle_app;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import java.util.*;
 
 public class Bogglemain extends Activity {
 
@@ -12,12 +14,14 @@ public class Bogglemain extends Activity {
 	public char[][] board; //Representation of the boggle board
 	public String activeIdentity; //The current identity of the board
 	public int score; //The total possible score of the board
+	public Set<String> posWords;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_boggle_main);
 		board = new char[4][4];
+		posWords = new HashSet<String>();
 	}
 
 	@Override
@@ -37,7 +41,99 @@ public class Bogglemain extends Activity {
 			//Manually look for all of the words
 		}
 		
+		for(int y=0;y<4;y++){
+			for(int x=0;x<4;x++){
+				//getWordsByIndex(y,x);
+				//debug("-----------------------------");
+			}
+		}
 		
+		getWordsByIndex(0,0);
+		
+		System.out.println(posWords);
+	}
+	
+	/* Takes an index of a starting letter and retrieves every possible word starting with
+	 * the index letter. 
+	 * 
+	 * Arguments: 
+	 * integer y, integer x are the x and y indexes of the given starting letter
+	 */
+	public void getWordsByIndex(int y, int x){
+		/* A 2D array of booleans to be used for ensuring no repeats */
+		boolean used[][] = new boolean[4][4];
+		for(int a=0;a<4;a++){
+			for(int b=0;b<4;b++){
+				used[a][b] = false;
+			}
+		}
+		
+		char rootLetter = board[y][x];
+		String t1 = "Root: "+y+","+x+" : "+rootLetter;
+		debug(t1);
+		
+		used[y][x]=true;
+		
+		int loX = x-1;
+		int hiX = x+1;
+		int loY = y-1;
+		int hiY = y+1;
+		
+		String word = Character.toString(rootLetter);
+		
+		//Iterates through all possible adjacent letters to the root letter
+		for(int j=loY;j<=hiY;j++){
+			for(int i=loX;i<=hiX;i++){
+				if(i==x && j==y){
+					//DURP
+				} else {
+					if(i>=0 && i<=3 && j>=0 && j<=3){
+						//String t3 = "Letter: ("+i+","+j+") "+board[j][i];
+						//debug(t3);
+						recurseGetLetters(j,i,used,word);
+						debug("-------------------------------------");
+						for(int a=0;a<4;a++){
+							for(int b=0;b<4;b++){
+								used[a][b] = false;
+							}
+							used[y][x] = true;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/* The recursive component of the board traveler
+	 */
+	public void recurseGetLetters(int y, int x, boolean[][] used, String word){
+		if(used[y][x] == true){
+			//debug(word);
+			posWords.add(word);
+			return;
+		}
+		
+		word = word + board[y][x];
+		used[y][x] = true;
+		
+		int loX = x-1;
+		int hiX = x+1;
+		int loY = y-1;
+		int hiY = y+1;
+		
+		for(int j=loY;j<=hiY;j++){
+			for(int i=loX;i<=hiX;i++){
+				if(i==x && j==y){
+					//DURP
+				} else {
+					if(i>=0 && i<=3 && j>=0 && j<=3){
+						//String t3 = "Letter: ("+i+","+j+") "+board[j][i];
+						//debug(t3);
+						recurseGetLetters(j,i,used,word);
+					}
+				}
+			}
+		}
 	}
 	
 	/* Checks the SQL server for previous instances of the given board
@@ -56,6 +152,7 @@ public class Bogglemain extends Activity {
 		
 		return false;
 	}
+
 	
 	/* Reads the contents of the board on the screen, assigns an identity, 
 	 * and stores a copy of the board in the board array
@@ -120,4 +217,9 @@ public class Bogglemain extends Activity {
 		ed10.setText(activeIdentity);	
 	}
 
+	/* Debugging output
+	 */
+	public void debug(String msg){
+		Log.d("Debugging",msg);
+	}
 }
