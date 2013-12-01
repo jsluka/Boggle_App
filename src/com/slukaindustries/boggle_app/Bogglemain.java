@@ -2,6 +2,11 @@ package com.slukaindustries.boggle_app;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Locale;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.content.res.AssetManager;
 
 public class Bogglemain extends Activity {
 
@@ -18,6 +24,7 @@ public class Bogglemain extends Activity {
 	public int score; //The total possible score of the board
 	public Set<String> posWords; //The set containing all possible words
 	public Set<String> foundWords; //The set of all real words
+	public Set<String> dict; //A dictionary. What more do you want?
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +33,13 @@ public class Bogglemain extends Activity {
 		board = new char[4][4];
 		posWords = new HashSet<String>();
 		foundWords = new HashSet<String>();
+		dict = new HashSet<String>();
+		
+		debug("Loading files...");
+		loadDictionary();
+		
+		String s1 = "Number of dictionary entries: "+dict.size();
+		debug(s1);
 	}
 
 	@Override
@@ -35,11 +49,53 @@ public class Bogglemain extends Activity {
 		return true;
 	}
 	
+	/* Loads the dictionary into the program (set<String> dict)
+	 */
+	public void loadDictionary(){
+		AssetManager am = this.getAssets();
+		InputStream is;
+		
+		try {
+			is = am.open("dict.txt");
+		} catch (IOException e) {
+			debug("Failed Opening");
+			return;
+		}
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		
+		//Read file lines
+		try {
+			String line;
+			while((line = br.readLine())!=null){
+				dict.add(line);
+			}
+		} catch (IOException e) {
+			debug("Failed Read");
+			return;
+		}
+		
+		//Close
+		try {
+			br.close();
+		} catch (IOException e) {
+			debug("Failed Close");
+			return;
+		}
+	}
+	
 	/* The main logic for the boggle word search tool
 	 */
 	public void findWordsMain(View view){
 		parseBoard();
 		boolean copyExists = lookupBoard();
+		
+		boolean used[][] = new boolean[4][4];
+		for(int x=0;x<4;x++){
+			for(int y=0;y<4;y++){
+				used[x][y] = false;
+			}
+		}
 		
 		if(copyExists){
 			//If a copy of the board exists in the SQL server, retrieve its contents
@@ -47,76 +103,58 @@ public class Bogglemain extends Activity {
 			//Manually look for all of the words
 			for(int y=0;y<4;y++){
 				for(int x=0;x<4;x++){
-					getWordsByIndex(y,x);
-					String s1 = "Root: ("+y+","+x+") Letter: "+board[y][x];
-					debug(s1);
-					debug("-----------------------------");
+					char rootLetter = board[y][x];
+					used[y][x]=true;
+					
+					int loX = x-1;
+					int hiX = x+1;
+					int loY = y-1;
+					int hiY = y+1;
+					
+					//String s1 = "Root: ("+y+","+x+") Letter: "+rootLetter;
+					//debug(s1);
+					
+					String word = Character.toString(rootLetter);
+					
+					for(int j=loY;j<=hiY;j++){
+						for(int i=loX;i<=hiX;i++){
+							if(i==x && j==y){
+							} else {
+								if(i>=0 && i<=3 && j>=0 && j<=3){
+									recurseGetLetters(j,i,used,word);
+									for(int a=0;a<4;a++){
+										for(int b=0;b<4;b++){
+											used[a][b] = false;
+										}
+										used[y][x] = true;
+									}
+								}
+							}
+						}
+					}
+					used[y][x] = false;
 				}
 			}
 		}
 		
 		debug("Printing words...");
 		debug("-----------------");
+		debug("FOUND: "+posWords.size());
 		
-		/*for(String s : posWords){
-			debug(s);
-		}*/
-		
-		String s1 = "Length: "+posWords.size();
-		debug(s1);
+		lookupWords();
 	}
 	
-	public void lookupWords(String word){
-		
-	}
-	
-	/* Takes an index of a starting letter and retrieves every possible word starting with
-	 * the index letter. 
-	 * 
-	 * Arguments: 
-	 * integer y, integer x are the x and y indexes of the given starting letter
+	/* Checks the dictionary for the list of possible words
 	 */
-	public void getWordsByIndex(int y, int x){
-		/* A 2D array of booleans to be used for ensuring no repeats */
-		boolean used[][] = new boolean[4][4];
-		for(int a=0;a<4;a++){
-			for(int b=0;b<4;b++){
-				used[a][b] = false;
+	public void lookupWords(){
+		for(String s : posWords){
+			if(dict.contains(s)){
+				foundWords.add(s);
 			}
 		}
 		
-		char rootLetter = board[y][x];
-		//String t1 = "Root: "+y+","+x+" : "+rootLetter;
-		//debug(t1);
-		
-		used[y][x]=true;
-		
-		int loX = x-1;
-		int hiX = x+1;
-		int loY = y-1;
-		int hiY = y+1;
-		
-		String word = Character.toString(rootLetter);
-		
-		//Iterates through all possible adjacent letters to the root letter
-		for(int j=loY;j<=hiY;j++){
-			for(int i=loX;i<=hiX;i++){
-				if(i==x && j==y){
-					//DURP
-				} else {
-					if(i>=0 && i<=3 && j>=0 && j<=3){
-						//String t3 = "Letter: ("+i+","+j+") "+board[j][i];
-						//debug(t3);
-						recurseGetLetters(j,i,used,word);
-						for(int a=0;a<4;a++){
-							for(int b=0;b<4;b++){
-								used[a][b] = false;
-							}
-							used[y][x] = true;
-						}
-					}
-				}
-			}
+		for(String s : foundWords){
+			debug(s);
 		}
 	}
 	
@@ -124,12 +162,15 @@ public class Bogglemain extends Activity {
 	 */
 	public void recurseGetLetters(int y, int x, boolean[][] used, String word){
 		if(used[y][x] == true){
-			//debug(word);
-			posWords.add(word);
+			//debug("Final: "+word);
+			if(word.length() > 2){
+				posWords.add(word.toUpperCase(Locale.getDefault()));
+			}
 			return;
 		}
 		
 		word = word + board[y][x];
+		//debug(word);
 		used[y][x] = true;
 		
 		int loX = x-1;
@@ -140,7 +181,6 @@ public class Bogglemain extends Activity {
 		for(int j=loY;j<=hiY;j++){
 			for(int i=loX;i<=hiX;i++){
 				if(i==x && j==y){
-					//DURP
 				} else {
 					if(i>=0 && i<=3 && j>=0 && j<=3){
 						//String t3 = "Letter: ("+i+","+j+") "+board[j][i];
