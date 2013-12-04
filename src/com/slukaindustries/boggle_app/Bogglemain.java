@@ -157,22 +157,17 @@ public class Bogglemain extends Activity {
 				}
 			}
 			
-			lookupWords();
+			lookupWords(); //Looks up words from dictionary
 			
-			Thread iid = new Thread(new insertIDThread());
-			iid.start();
-			try{
-				iid.join();	
-			} catch(Exception e){
-				debug(e.toString());
-			}
+			IIDThread(); //Insert identity into database
+			
+			//IWThread(); //Insert words into database
 		}
 		
 		debug("Printing words...");
 		debug("-----------------");
 		debug("FOUND: "+posWords.size());
 		debug("TOTAL: "+foundWords.size());
-		
 	}
 	
 	/* Checks the dictionary for the list of possible words
@@ -197,6 +192,8 @@ public class Bogglemain extends Activity {
 		calcScore();
 		}
 	
+	/* Calculates the total possible score of the words found
+	 */
 	public void calcScore(){
 		for(String s : foundWords){
 			if(s.length() == 3 || s.length() == 4){
@@ -211,6 +208,23 @@ public class Bogglemain extends Activity {
 				score = score + 11;
 			}
 		}
+	}
+	
+	//Calculates the score of an individual word
+	public int wordScore(String word){
+		int score = 0;
+		if(word.length() == 3 || word.length() == 4){
+			score = 1;
+		} else if(word.length() == 5){
+			score = 2;
+		} else if(word.length() == 6){
+			score = 3;
+		} else if(word.length() == 7){
+			score = 5;
+		} else if(word.length() >= 8){
+			score = 11;
+		}
+		return score;
 	}
 	
 	/* The recursive component of the board traveler
@@ -250,6 +264,7 @@ public class Bogglemain extends Activity {
 	/* Checks the SQL server for previous instances of the given board
 	 */
 	public boolean lookupBoard(){
+		System.out.println("LookupBoard...");
 		Thread lt = new Thread(new lookupThread());
 		lt.start();
 		try{
@@ -273,20 +288,18 @@ public class Bogglemain extends Activity {
 				
 				br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				
-				String inputLine;
-				while((inputLine = br.readLine()) != null){
-					if(Integer.parseInt(inputLine) == -1){
-						debug("Exiting...");
-						break;
-					}
-					if(Integer.parseInt(inputLine) == 1){
-						debug("Found identity");
-						foundIdentity = true;
-					}
-					debug(inputLine);
+				String inputLine = br.readLine();
+				if(Integer.parseInt(inputLine) == -1){
+					debug("Doesn't exist...");
 				}
-
-				debug("Phone Socket closing...");
+				if(Integer.parseInt(inputLine) == 1){
+					debug("Found identity");
+					foundIdentity = true;
+				}
+				debug(inputLine);
+				
+				pw.close();
+				br.close();
 				socket.close();
 			} catch(Exception e){
 				debug(e.toString());
@@ -304,6 +317,8 @@ public class Bogglemain extends Activity {
 				pw = new PrintWriter(socket.getOutputStream(),true);
 				pw.println("retrieve2|"+activeIdentity);
 				
+				pw.close();
+				br.close();
 				socket.close();
 			} catch(Exception e){
 				debug(e.toString());
@@ -311,41 +326,43 @@ public class Bogglemain extends Activity {
 		}
 	}
 	
+	/* Inserts identity into database
+	 */
+	public void IIDThread(){
+		System.out.println("IIDThread...");
+		Thread iid = new Thread(new insertIDThread());
+		iid.start();
+		try{
+			iid.join();
+		} catch (Exception e){
+			debug(e.toString());
+		}
+		System.out.println("Ending IIDThread...");
+	}
+	
 	/* Thread for inserting activeIdentity into database
 	 */
 	class insertIDThread implements Runnable {
 		public void run(){
 			try {
-				debug("Inserting ID...");
 				socket = new Socket(ip,port);
 				pw = new PrintWriter(socket.getOutputStream(),true);
+				br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				
-				pw.println("insid3|"+activeIdentity+"|"+foundWords.size()+"|"+score);
+				pw.println("insert3|"+activeIdentity+"|"+foundWords.size()+"|"+score);
 				
-				socket.close();
-			} catch (Exception e){
-				debug(e.toString());
-			}
-		}
-	}
-	
-	/* Thread for inserting words into words table
-	 */
-	class insertWordsThread implements Runnable {
-		public void run(){
-			try {
-				debug("Inserting words...");
+				String returned = br.readLine();
 				
-				socket = new Socket(ip,port);
-				pw = new PrintWriter(socket.getOutputStream(),true);
-				String let = "inswo4|"+activeIdentity;
-				System.out.println(let);
-				pw.println(let);
-				
-				for(String s : foundWords){
-					debug("Adding: "+s);
+				if(Integer.parseInt(returned) == 1){
+					for(String s : foundWords){
+						pw.println(s+"|"+activeIdentity+"|"+wordScore(s));
+					}
 				}
 				
+				pw.println("##");
+				
+				pw.close();
+				br.close();
 				socket.close();
 			} catch (Exception e){
 				debug(e.toString());
