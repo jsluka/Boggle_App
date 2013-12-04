@@ -98,6 +98,22 @@ public class Bogglemain extends Activity {
 		}
 	}
 	
+	/* Erases all public variables. Used for rerunning the app
+	 */
+	public void restore(){
+		/*board = new char[4][4];
+		for(int a=0;a<4;a++){
+			for(int b=0;b<4;b++){
+				board[a][b] = 0;
+			}
+		}*/
+		posWords.clear();
+		foundWords.clear();
+		foundIdentity = false;
+		score = 0;
+		activeIdentity = "";
+	}
+	
 	/* The main logic for the boggle word search tool
 	 */
 	public void findWordsMain(View view){
@@ -160,14 +176,14 @@ public class Bogglemain extends Activity {
 			lookupWords(); //Looks up words from dictionary
 			
 			IIDThread(); //Insert identity into database
-			
-			//IWThread(); //Insert words into database
 		}
 		
 		debug("Printing words...");
 		debug("-----------------");
 		debug("FOUND: "+posWords.size());
 		debug("TOTAL: "+foundWords.size());
+		
+		restore();
 	}
 	
 	/* Checks the dictionary for the list of possible words

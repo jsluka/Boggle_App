@@ -29,98 +29,98 @@
             android:layout_gravity="left|top"
             android:layout_row="0"
             android:inputType = "text"
-            android:text = "a" />
+            android:hint = "a" />
 
         <EditText
             android:id="@+id/editText2"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "b" />
+            android:hint = "b" />
 
         <EditText
             android:id="@+id/editText3"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "c" />
+            android:hint = "c" />
 
         <EditText
             android:id="@+id/editText4"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "d" />
+            android:hint = "d" />
 
         <EditText
             android:id="@+id/editText5"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "e" />
+            android:hint = "e" />
 
         <EditText
             android:id="@+id/editText6"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "f" />
+            android:hint = "f" />
 
         <EditText
             android:id="@+id/editText7"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "g" />
+            android:hint = "g" />
 
         <EditText
             android:id="@+id/editText8"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "h" />
+            android:hint = "h" />
 
         <EditText
             android:id="@+id/editText9"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "i" />
+            android:hint = "i" />
 
         <EditText
             android:id="@+id/editText11"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text" 
-            android:text = "j" />
+            android:hint = "j" />
 
         <EditText
             android:id="@+id/editText12"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "k" />
+            android:hint = "k" />
 
         <EditText
             android:id="@+id/editText13"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "l" />
+            android:hint = "l" />
 
         <EditText
             android:id="@+id/editText14"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "m" />
+            android:hint = "m" />
 
         <EditText
             android:id="@+id/editText15"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "n" />
+            android:hint = "n" />
         
 
         <EditText
@@ -128,14 +128,14 @@
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "o" />
+            android:hint = "o" />
 
         <EditText 
             android:id="@+id/editText17"
             android:layout_gravity="fill_horizontal"
             android:maxLength="1"
             android:inputType = "text"
-            android:text = "p" />
+            android:hint = "p" />
 
     </GridLayout>
 
@@ -157,7 +157,8 @@
         android:layout_below="@+id/gridLayout1"
         android:layout_marginTop="15dp"
         android:ems="10"
-        android:inputType="none" />
+        android:inputType="none"
+        android:hint="Identity" />
 
     <EditText
         android:id="@+id/editText18"
@@ -167,19 +168,10 @@
         android:layout_below="@+id/editText10"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:inputType="textMultiLine" >
+        android:inputType="textMultiLine"
+        android:hint="Found Words" >
 
         <requestFocus />
     </EditText>
-
-    <EditText
-        android:id="@+id/editText19"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText18"
-        android:layout_below="@+id/editText18"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:inputType="number" />
 
 </RelativeLayout>
