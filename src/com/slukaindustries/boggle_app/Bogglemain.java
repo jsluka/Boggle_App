@@ -3,10 +3,14 @@ package com.slukaindustries.boggle_app;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Locale;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
+import java.net.Socket;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,6 +22,15 @@ import android.content.res.AssetManager;
 
 public class Bogglemain extends Activity {
 
+	private static Socket socket;
+	private static PrintWriter pw;
+	private static BufferedReader br; 
+	
+	private static final int port = 63400;
+	private static final String ip = "50.141.229.223";
+	
+	public boolean foundIdentity;
+	
 	public final static String EXTRA_MESSAGE = "com.slukaindustries.boggle_app.MESSAGE";
 	public char[][] board; //Representation of the boggle board
 	public String activeIdentity; //The current identity of the board
@@ -34,6 +47,7 @@ public class Bogglemain extends Activity {
 		posWords = new HashSet<String>();
 		foundWords = new HashSet<String>();
 		dict = new HashSet<String>();
+		foundIdentity = false;
 		
 		debug("Loading files...");
 		loadDictionary();
@@ -88,8 +102,10 @@ public class Bogglemain extends Activity {
 	 */
 	public void findWordsMain(View view){
 		parseBoard();
+		
 		boolean copyExists = lookupBoard();
 		
+		//TODO: Put into function
 		boolean used[][] = new boolean[4][4];
 		for(int x=0;x<4;x++){
 			for(int y=0;y<4;y++){
@@ -98,8 +114,16 @@ public class Bogglemain extends Activity {
 		}
 		
 		if(copyExists){
-			//If a copy of the board exists in the SQL server, retrieve its contents
+			debug("Identity Exists...");
+			Thread rw = new Thread(new retrieveWordsThread());
+			rw.start();
+			try{
+				rw.join();	
+			} catch(Exception e){
+				debug(e.toString());
+			}
 		} else {
+			debug("New Identity...");
 			//Manually look for all of the words
 			for(int y=0;y<4;y++){
 				for(int x=0;x<4;x++){
@@ -110,9 +134,6 @@ public class Bogglemain extends Activity {
 					int hiX = x+1;
 					int loY = y-1;
 					int hiY = y+1;
-					
-					//String s1 = "Root: ("+y+","+x+") Letter: "+rootLetter;
-					//debug(s1);
 					
 					String word = Character.toString(rootLetter);
 					
@@ -135,26 +156,60 @@ public class Bogglemain extends Activity {
 					used[y][x] = false;
 				}
 			}
+			
+			lookupWords();
+			
+			Thread iid = new Thread(new insertIDThread());
+			iid.start();
+			try{
+				iid.join();	
+			} catch(Exception e){
+				debug(e.toString());
+			}
 		}
 		
 		debug("Printing words...");
 		debug("-----------------");
 		debug("FOUND: "+posWords.size());
+		debug("TOTAL: "+foundWords.size());
 		
-		lookupWords();
 	}
 	
 	/* Checks the dictionary for the list of possible words
 	 */
 	public void lookupWords(){
+		debug("LOoking up...");
 		for(String s : posWords){
 			if(dict.contains(s)){
 				foundWords.add(s);
 			}
 		}
 		
+		String out = "";
 		for(String s : foundWords){
 			debug(s);
+			out = out + s+", ";
+		} 
+		
+		EditText ed18 = (EditText)findViewById(R.id.editText18);
+		ed18.setText(out);
+		
+		calcScore();
+		}
+	
+	public void calcScore(){
+		for(String s : foundWords){
+			if(s.length() == 3 || s.length() == 4){
+				score = score + 1;
+			} else if(s.length() == 5){
+				score = score + 2;
+			} else if(s.length() == 6){
+				score = score + 3;
+			} else if(s.length() == 7){
+				score = score + 5;
+			} else if(s.length() >= 8){
+				score = score + 11;
+			}
 		}
 	}
 	
@@ -195,20 +250,108 @@ public class Bogglemain extends Activity {
 	/* Checks the SQL server for previous instances of the given board
 	 */
 	public boolean lookupBoard(){
+		Thread lt = new Thread(new lookupThread());
+		lt.start();
+		try{
+			lt.join();	
+		} catch(Exception e){
+			debug(e.toString());
+		}
 		
-		/*Contact the SQL server: 
-		 * 
-		 * SELECT *
-		 * FROM archive
-		 * WHERE id = activeIdentity;
-		 * 
-		 * If there is no return (or no response), return false
-		 * Else return true
-		 */
-		
-		return false;
+		return foundIdentity;
 	}
 
+	/* Thread for checking if the identity already exists in the database
+	 */
+	class lookupThread implements Runnable {
+		public void run(){
+			try{
+				debug("Looking up...");
+				socket = new Socket(ip,port);
+				pw = new PrintWriter(socket.getOutputStream(),true);
+				pw.println("lookup1|"+activeIdentity);
+				
+				br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				
+				String inputLine;
+				while((inputLine = br.readLine()) != null){
+					if(Integer.parseInt(inputLine) == -1){
+						debug("Exiting...");
+						break;
+					}
+					if(Integer.parseInt(inputLine) == 1){
+						debug("Found identity");
+						foundIdentity = true;
+					}
+					debug(inputLine);
+				}
+
+				debug("Phone Socket closing...");
+				socket.close();
+			} catch(Exception e){
+				debug(e.toString());
+			}
+		}
+	}
+	
+	/* Thread for retrieving all words in the words database with ID "activeIdentity"
+	 */
+	class retrieveWordsThread implements Runnable {
+		public void run(){
+			try {
+				debug("Retrieving words...");
+				socket = new Socket(ip,port);
+				pw = new PrintWriter(socket.getOutputStream(),true);
+				pw.println("retrieve2|"+activeIdentity);
+				
+				socket.close();
+			} catch(Exception e){
+				debug(e.toString());
+			}
+		}
+	}
+	
+	/* Thread for inserting activeIdentity into database
+	 */
+	class insertIDThread implements Runnable {
+		public void run(){
+			try {
+				debug("Inserting ID...");
+				socket = new Socket(ip,port);
+				pw = new PrintWriter(socket.getOutputStream(),true);
+				
+				pw.println("insid3|"+activeIdentity+"|"+foundWords.size()+"|"+score);
+				
+				socket.close();
+			} catch (Exception e){
+				debug(e.toString());
+			}
+		}
+	}
+	
+	/* Thread for inserting words into words table
+	 */
+	class insertWordsThread implements Runnable {
+		public void run(){
+			try {
+				debug("Inserting words...");
+				
+				socket = new Socket(ip,port);
+				pw = new PrintWriter(socket.getOutputStream(),true);
+				String let = "inswo4|"+activeIdentity;
+				System.out.println(let);
+				pw.println(let);
+				
+				for(String s : foundWords){
+					debug("Adding: "+s);
+				}
+				
+				socket.close();
+			} catch (Exception e){
+				debug(e.toString());
+			}
+		}
+	}
 	
 	/* Reads the contents of the board on the screen, assigns an identity, 
 	 * and stores a copy of the board in the board array

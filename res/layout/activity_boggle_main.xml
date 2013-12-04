@@ -154,11 +154,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/gridLayout1"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/gridLayout1"
+        android:layout_marginTop="15dp"
         android:ems="10"
-        android:inputType = "none" >
+        android:inputType="none" />
+
+    <EditText
+        android:id="@+id/editText18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText10"
+        android:layout_below="@+id/editText10"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textMultiLine" >
 
         <requestFocus />
     </EditText>
+
+    <EditText
+        android:id="@+id/editText19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText18"
+        android:layout_below="@+id/editText18"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="number" />
 
 </RelativeLayout>
