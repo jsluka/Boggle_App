@@ -8,170 +8,198 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".Bogglemain" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
-    <GridLayout
-        android:id="@+id/gridLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:columnCount="4"
-        android:rowCount="4" >
-
-        <EditText
-            android:id="@+id/editText1"
-            android:layout_column="0"
-            android:layout_gravity="left|top"
-            android:layout_row="0"
-            android:inputType = "text"
-            android:hint = "a" />
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "b" />
-
-        <EditText
-            android:id="@+id/editText3"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "c" />
-
-        <EditText
-            android:id="@+id/editText4"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "d" />
-
-        <EditText
-            android:id="@+id/editText5"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "e" />
-
-        <EditText
-            android:id="@+id/editText6"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "f" />
-
-        <EditText
-            android:id="@+id/editText7"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "g" />
-
-        <EditText
-            android:id="@+id/editText8"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "h" />
-
-        <EditText
-            android:id="@+id/editText9"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "i" />
-
-        <EditText
-            android:id="@+id/editText11"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text" 
-            android:hint = "j" />
-
-        <EditText
-            android:id="@+id/editText12"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "k" />
-
-        <EditText
-            android:id="@+id/editText13"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "l" />
-
-        <EditText
-            android:id="@+id/editText14"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "m" />
-
-        <EditText
-            android:id="@+id/editText15"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "n" />
-        
-
-        <EditText
-            android:id="@+id/editText16"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "o" />
-
-        <EditText 
-            android:id="@+id/editText17"
-            android:layout_gravity="fill_horizontal"
-            android:maxLength="1"
-            android:inputType = "text"
-            android:hint = "p" />
-
-    </GridLayout>
-
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/gridLayout1"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="24dp"
         android:onClick="findWordsMain"
-        android:text= "@string/submit" />
+        android:text="@string/submit" />
 
-    <EditText
-        android:id="@+id/editText10"
+    <GridLayout
+        android:id="@+id/gridLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/gridLayout1"
-        android:layout_below="@+id/gridLayout1"
-        android:layout_marginTop="15dp"
-        android:ems="10"
-        android:inputType="none"
-        android:hint="Identity" />
+        android:layout_alignLeft="@+id/button1"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="17dp"
+        android:columnCount="2" >
+
+        <GridLayout
+            android:id="@+id/gridLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_horizontal"
+            android:columnCount="4"
+            android:rowCount="4" >
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_column="0"
+                android:layout_gravity="left|top"
+                android:layout_row="0"
+                android:hint="a"
+                android:inputType="text" >
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_gravity="fill_horizontal"
+                android:hint="b"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_gravity="fill_horizontal"
+                android:hint="c"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText4"
+                android:layout_gravity="fill_horizontal"
+                android:hint="d"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText5"
+                android:layout_gravity="fill_horizontal"
+                android:hint="e"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText6"
+                android:layout_gravity="fill_horizontal"
+                android:hint="f"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText7"
+                android:layout_gravity="fill_horizontal"
+                android:hint="g"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText8"
+                android:layout_gravity="fill_horizontal"
+                android:hint="h"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText9"
+                android:layout_gravity="fill_horizontal"
+                android:hint="i"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText11"
+                android:layout_gravity="fill_horizontal"
+                android:hint="j"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText12"
+                android:layout_gravity="fill_horizontal"
+                android:hint="k"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText13"
+                android:layout_gravity="fill_horizontal"
+                android:hint="l"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText14"
+                android:layout_gravity="fill_horizontal"
+                android:hint="m"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText15"
+                android:layout_gravity="fill_horizontal"
+                android:hint="n"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText16"
+                android:layout_gravity="fill_horizontal"
+                android:hint="o"
+                android:inputType="text"
+                android:maxLength="1" />
+
+            <EditText
+                android:id="@+id/editText17"
+                android:layout_gravity="fill_horizontal"
+                android:hint="p"
+                android:inputType="text"
+                android:maxLength="1" />
+        </GridLayout>
+
+        <GridLayout
+            android:id="@+id/gridLayout3"
+            android:layout_width="wrap_content"
+            android:layout_gravity="fill_horizontal"
+            android:columnCount="1" >
+
+            <EditText
+                android:id="@+id/editText10"
+                android:layout_width="142dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill_horizontal"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="Identity"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/editText19"
+                android:layout_width="95dp"
+                android:layout_gravity="fill_horizontal"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="Score"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/editText20"
+                android:layout_width="158dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill_horizontal"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="Retrieved Using"
+                android:inputType="text" />
+
+        </GridLayout>
+
+    </GridLayout>
 
     <EditText
         android:id="@+id/editText18"
-        android:layout_width="wrap_content"
+        android:layout_width="142dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText10"
-        android:layout_below="@+id/editText10"
-        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="26dp"
         android:ems="10"
-        android:inputType="textMultiLine"
-        android:hint="Found Words" >
-
-        <requestFocus />
-    </EditText>
+        android:gravity="center"
+        android:hint="Found Words"
+        android:inputType="textMultiLine" />
 
 </RelativeLayout>

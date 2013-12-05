@@ -19,13 +19,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.content.res.AssetManager;
+import android.widget.ProgressBar;
 
 public class Bogglemain extends Activity {
 
 	private static Socket socket;
 	private static PrintWriter pw;
 	private static BufferedReader br; 
-	
 	private static final int port = 63400;
 	private static final String ip = "50.141.229.223";
 	
@@ -38,6 +38,7 @@ public class Bogglemain extends Activity {
 	public Set<String> posWords; //The set containing all possible words
 	public Set<String> foundWords; //The set of all real words
 	public Set<String> dict; //A dictionary. What more do you want?
+	public String method; //The method of retrieving the possible words
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class Bogglemain extends Activity {
 		foundWords = new HashSet<String>();
 		dict = new HashSet<String>();
 		foundIdentity = false;
+		method = "";
 		
 		debug("Loading files...");
 		loadDictionary();
@@ -112,11 +114,13 @@ public class Bogglemain extends Activity {
 		foundIdentity = false;
 		score = 0;
 		activeIdentity = "";
+		method = "";
 	}
 	
 	/* The main logic for the boggle word search tool
 	 */
 	public void findWordsMain(View view){
+		
 		parseBoard();
 		
 		boolean copyExists = lookupBoard();
@@ -130,15 +134,12 @@ public class Bogglemain extends Activity {
 		}
 		
 		if(copyExists){
+			method = "Cloud";
 			debug("Identity Exists...");
-			Thread rw = new Thread(new retrieveWordsThread());
-			rw.start();
-			try{
-				rw.join();	
-			} catch(Exception e){
-				debug(e.toString());
-			}
+			RWThread();
+			displayResults();
 		} else {
+			method = "Local";
 			debug("New Identity...");
 			//Manually look for all of the words
 			for(int y=0;y<4;y++){
@@ -178,6 +179,9 @@ public class Bogglemain extends Activity {
 			IIDThread(); //Insert identity into database
 		}
 		
+		calcScore();
+		displayResults();
+		
 		debug("Printing words...");
 		debug("-----------------");
 		debug("FOUND: "+posWords.size());
@@ -196,14 +200,14 @@ public class Bogglemain extends Activity {
 			}
 		}
 		
-		String out = "";
+		/*String out = "";
 		for(String s : foundWords){
 			debug(s);
 			out = out + s+", ";
 		} 
 		
 		EditText ed18 = (EditText)findViewById(R.id.editText18);
-		ed18.setText(out);
+		ed18.setText(out);*/
 		
 		calcScore();
 		}
@@ -323,15 +327,36 @@ public class Bogglemain extends Activity {
 		}
 	}
 	
+	//Controller for retrieveWordsthread
+	public void RWThread(){
+		System.out.println("RWThread...");
+		Thread rw = new Thread(new retrieveWordsThread());
+		rw.start();
+		try{
+			rw.join();	
+		} catch(Exception e){
+			debug(e.toString());
+		}
+		System.out.println("RWThread closing...");
+	}
+	
 	/* Thread for retrieving all words in the words database with ID "activeIdentity"
 	 */
 	class retrieveWordsThread implements Runnable {
 		public void run(){
 			try {
 				debug("Retrieving words...");
+				
 				socket = new Socket(ip,port);
 				pw = new PrintWriter(socket.getOutputStream(),true);
+				br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw.println("retrieve2|"+activeIdentity);
+				
+				String inline;
+                while(!(inline = br.readLine()).equals("##")){
+                	System.out.println(inline);
+                    foundWords.add(inline);
+                }
 				
 				pw.close();
 				br.close();
@@ -449,6 +474,23 @@ public class Bogglemain extends Activity {
 		ed10.setText(activeIdentity);	
 	}
 
+	//Displays the contents of foundWords in the found box
+	public void displayResults(){
+		String out1 = "";
+		for(String s : foundWords){
+			out1 = out1 + s + ",";
+		}
+		
+		EditText ed18 = (EditText)findViewById(R.id.editText18);
+		ed18.setText(out1);	
+		
+		EditText ed20 = (EditText)findViewById(R.id.editText20);
+		ed20.setText(method);
+		
+		EditText ed19 = (EditText)findViewById(R.id.editText19);
+		ed19.setText(Integer.toString(score));
+	}
+	
 	/* Debugging output
 	 */
 	public void debug(String msg){
